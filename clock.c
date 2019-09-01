@@ -1,3 +1,5 @@
+#C program to create a fully functional clock using 2D transformation
+
 #include<stdio.h>
 #include<graphics.h>
 #include<stdlib.h>
