@@ -1,13 +1,15 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<math.h>
+#include<graphics.h>
 
 struct point{
-	int x,y,flag;
-	int region_code[4];
+	float x,y;
+	int flag,region_code[4];
 }pt[2];
 
-int xmin,xmax,ymin,ymax;
+float xmin,xmax,ymin,ymax;
+float x1,yy1,x2,y2,xt,xb,yl,yr,x1d,y1d,x2d,y2d;
 
 void matrix()
 {
@@ -73,27 +75,54 @@ int clip_check()
 
 void clip_line()
 {
-	if(clip_check()==1)
-		return;
-	float m=(y2-y1)/(x2-x1);
-
+	x1=(float)pt[0].x; x1d=xmin;
+	yy1=(float)pt[0].y; y1d=ymin;
+	x2=(float)pt[1].x; x2d=xmax;
+	y2=(float)pt[1].y; y2d=ymax;
+	//if(clip_check()==1)
+	//	return;
+	float m=(y2-yy1)/(x2-x1);
+	yl=yy1+m*(xmin-x1);
+	yr=yy1+m*(xmax-x1);
+	xt=x1+(ymax-yy1)/m;
+	xb=x1+(ymin-yy1)/m;
+//	rectangle(xmin,ymin,xmax,ymax);
+	if(yl>=ymin && yl<=ymax)
+		y1d=yl;
+	if(yr>=ymin && yl<=ymax)
+		y2d=yr;
+	if(xt>=xmin && xt<=xmax)
+		x1d=xt;
+	if(xb>=xmin && xb<=xmax)
+		x2d=xb;
+	line(x1d,y1d,x2d,y2d);
+}
 
 
 void main()
 {
-	int i,j;
-	printf("Enter the line coordinates:\n");
-	for(i=0;i<=1;i++)
-		scanf("%d%d",&pt[i].x,&pt[i].y);
-	printf("Enter the clipping window coordinates:\n");
-	scanf("%d%d%d%d",&xmin,&xmax,&ymin,&ymax);
+	int i,j,gm,gd=DETECT;
+	pt[0].x=80;
+	pt[0].y=5;
+	pt[1].x=300;
+	pt[1].y=300;
+	xmin=60;
+	xmax=200;
+	ymin=10;
+	ymax=300;
+	//printf("Enter the line coordinates:\n");
+	//for(i=0;i<=1;i++)
+	//	scanf("%d%d",&pt[i].x,&pt[i].y);
+	//printf("Enter the clipping window coordinates:\n");
+	//scanf("%d%d%d%d",&xmin,&xmax,&ymin,&ymax);
 	matrix();
-	printf("\nRegions:\n");
-	for(i=0;i<=1;i++)
-	{
-		for(j=0;j<=3;j++)
-			printf("%d ",pt[i].region_code[j]);
-		printf("\n");
-	}
+	initgraph(&gd,&gm,NULL);
+	line(pt[0].x,pt[0].y,pt[1].x,pt[1].y);
+	rectangle(xmin,ymin,xmax,ymax);
+	delay(1000);
+//	cleardevice();
+	setcolor(5);
+	clip_line();
+	getch();
+	closegraph();
 }
-
